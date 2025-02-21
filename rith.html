@@ -1,0 +1,123 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>GPA & CGPA Calculator</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background: linear-gradient(to right, #A8E6CF, #DCEDC1);
+            color: #2E7D32;
+            text-align: center;
+            margin: 0;
+            padding: 20px;
+        }
+        .container {
+            max-width: 500px;
+            margin: auto;
+            background: white;
+            padding: 20px;
+            border-radius: 10px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+            margin-top: 20px;
+        }
+        input {
+            width: 95%;
+            padding: 10px;
+            margin: 5px 0;
+            border: 1px solid #2E7D32;
+            border-radius: 5px;
+            background: #F1F8E9;
+            color: #2E7D32;
+        }
+        button {
+            width: 100%;
+            padding: 10px;
+            background: #388E3C;
+            border: none;
+            color: white;
+            font-size: 16px;
+            margin-top: 10px;
+            cursor: pointer;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+        button:hover {
+            background: #2E7D32;
+        }
+        h2, h3 {
+            color: #1B5E20;
+        }
+    </style>
+</head>
+<body>
+    <h2>🌿 GPA & CGPA Calculator 🌿</h2>
+    <div class="container">
+        <h3>GPA Calculator</h3>
+        <label>Number of Subjects:</label>
+        <input type="number" id="numSubjects" min="1" max="10" placeholder="Enter number of subjects">
+        <div id="subjectsContainer"></div>
+        <button onclick="calculateGPA()">Calculate GPA</button>
+        <h3>GPA: <span id="gpaResult">-</span></h3>
+    </div>
+    <div class="container">
+        <h3>CGPA Calculator</h3>
+        <label>Previous Total Credits:</label>
+        <input type="number" id="prevCredits" min="1" max="200" placeholder="Total credits before this sem">
+        <label>Previous CGPA:</label>
+        <input type="number" id="prevCGPA" min="0" max="10" step="0.01" placeholder="CGPA till last semester">
+        <label>Current Semester Credits:</label>
+        <input type="number" id="currCredits" min="1" max="39" placeholder="Credits in this semester">
+        <label>Current Semester GPA:</label>
+        <input type="number" id="currGPA" min="0" max="10" step="0.01" placeholder="GPA this semester">
+        <button onclick="calculateCGPA()">Calculate CGPA</button>
+        <h3>CGPA: <span id="cgpaResult">-</span></h3>
+    </div>
+    <script>
+        document.getElementById("numSubjects").addEventListener("input", function () {
+            const numSubjects = parseInt(this.value);
+            let subjectsContainer = document.getElementById("subjectsContainer");
+            subjectsContainer.innerHTML = "";
+            for (let i = 1; i <= numSubjects; i++) {
+                subjectsContainer.innerHTML += `
+                    <label>Subject ${i} Credits:</label>
+                    <input type="number" min="1" max="10" id="credits${i}" placeholder="Credits for Subject ${i}">
+                    <label>Subject ${i} Grade (0-10):</label>
+                    <input type="number" min="0" max="10" id="grade${i}" placeholder="Grade for Subject ${i}">
+                `;
+            }
+        });
+        function calculateGPA() {
+            let numSubjects = parseInt(document.getElementById("numSubjects").value);
+            let totalCredits = 0, weightedSum = 0;
+            for (let i = 1; i <= numSubjects; i++) {
+                let credits = parseFloat(document.getElementById(`credits${i}`).value);
+                let grade = parseFloat(document.getElementById(`grade${i}`).value);
+                if (isNaN(credits) || isNaN(grade)) {
+                    alert(`Please enter valid inputs for Subject ${i}`);
+                    return;
+                }
+                totalCredits += credits;
+                weightedSum += credits * grade;
+            }
+            let gpa = weightedSum / totalCredits;
+            document.getElementById("gpaResult").innerText = gpa.toFixed(2);
+        }
+        function calculateCGPA() {
+            let prevCredits = parseFloat(document.getElementById("prevCredits").value);
+            let prevCGPA = parseFloat(document.getElementById("prevCGPA").value);
+            let currCredits = parseFloat(document.getElementById("currCredits").value);
+            let currGPA = parseFloat(document.getElementById("currGPA").value);
+            if (isNaN(prevCredits) || isNaN(prevCGPA) || isNaN(currCredits) || isNaN(currGPA)) {
+                alert("Please enter valid inputs");
+                return;
+            }
+            let totalCredits = prevCredits + currCredits;
+            let totalPoints = (prevCGPA * prevCredits) + (currGPA * currCredits);
+            let newCGPA = totalPoints / totalCredits;
+            document.getElementById("cgpaResult").innerText = newCGPA.toFixed(2);
+        }
+    </script>
+</body>
+</html>
